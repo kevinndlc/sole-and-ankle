@@ -30,20 +30,26 @@ const ShoeCard = ({
     : isNewShoe(releaseDate)
       ? 'new-release'
       : 'default'
+  
+
 
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
+          <VariantTag variant={variant}>
+            {variant === 'on-sale' ? 'Sale' : 'Just Released!'}
+          </VariantTag>
         </ImageWrapper>
         <Spacer size={12} />
-        <Row style={{display: "flex", justifyContent: "space-between"}}>
+        <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price variant={variant}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <SalePrice variant={variant}>{formatPrice(salePrice)}</SalePrice>
         </Row>
       </Wrapper>
     </Link>
@@ -65,8 +71,23 @@ const Image = styled.img`
   width: 100%;
 `;
 
+const VariantTag = styled.span`
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  padding: 8px;
+  background: ${p => p.variant === 'on-sale' ? COLORS.primary : COLORS.secondary};
+  border-radius: 2px;
+  display: ${p => p.variant === 'default' ? 'none' : null};
+  font-size: 14px;
+  font-weight: 700;
+  color: ${COLORS.white};
+`
+
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Name = styled.h3`
@@ -74,7 +95,11 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  color: ${(p) => (p.variant === 'on-sale' ? COLORS.gray[700] : null)};
+  text-decoration: ${(p) =>
+    p.variant === 'on-sale' ? 'line-through' : null};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -83,6 +108,7 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+  display: ${p => p.variant !== 'on-sale' ? 'none' : null}
 `;
 
 export default ShoeCard;
